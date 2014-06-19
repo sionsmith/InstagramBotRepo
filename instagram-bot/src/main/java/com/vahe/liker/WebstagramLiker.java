@@ -10,7 +10,6 @@ import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
@@ -23,6 +22,8 @@ import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.vahe.LikeParmetes;
 import com.vahe.utils.Const;
 import com.vahe.utils.HtmlUnitUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WebstagramLiker implements InstagramLiker {
 
@@ -32,9 +33,9 @@ public class WebstagramLiker implements InstagramLiker {
 
 	private static final String PK = "pk";
 
-	private static final Logger LOGGER = Logger.getLogger(WebstagramLiker.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(WebstagramLiker.class);
 
-	private static final String URL = "http://web.stagram.com/do_like/";
+	private static final String URL = "http://web.stagram.com/api/like/";
 
 	private static final DefaultHttpClient DEFAULT_HTTP_CLIENT = new DefaultHttpClient();
 	
@@ -59,10 +60,15 @@ public class WebstagramLiker implements InstagramLiker {
 		try {
 			String genNumber = String.valueOf(randomInt(1000, 9999));
 
-			Request request = Request.Post(URL)
+			Request request = Request.Get(URL)
 					.version(HttpVersion.HTTP_1_1)
 					.addHeader(COOKIE, PHPSESSID + sessionId)
 					.addHeader(USER_AGENT, MOZILLA)
+					.addHeader(ACCEPT, "application/json, text/javascript, */*; q=0.01")
+                    .addHeader("Connection", "keep-alive")
+                    .addHeader("Host", "web.stagram.com")
+                    .addHeader("X-Requested-With", "XMLHttpRequest")
+                    .addHeader("Referer", "http://web.stagram.com/n/carliestylez")
 					.bodyForm(Form.form().add(PK, photoId).add(T, genNumber)
 					.build());
 
@@ -72,10 +78,10 @@ public class WebstagramLiker implements InstagramLiker {
 			
 
 		} catch (IOException e) {
-			LOGGER.error("Exception in likeByPhotoId ", e);
+			LOGGER.error("Exception in likeByPhotoId caused by: {}", e);
 			refreshSession();
 		}
-		LOGGER.info("!!!! Webstagram  Respone is    " + response);
+		LOGGER.info("!!!! Webstagram  Respone is: {}" + response);
 		if(response.contains("log in")){
 			refreshSession();
 		}
@@ -88,7 +94,7 @@ public class WebstagramLiker implements InstagramLiker {
 
 	private static class SessionScraper {
 
-		private static final Logger LOGGER = Logger.getLogger(SessionScraper.class);
+		private static final Logger LOGGER = LoggerFactory.getLogger(SessionScraper.class);
 
 		private static final String TAG_PAGE = "http://web.stagram.com/tag/love/";
 		private static final String SESSIONID = "PHPSESSID";
@@ -126,12 +132,12 @@ public class WebstagramLiker implements InstagramLiker {
 					Cookie cookie = webClient.getCookieManager().getCookie(SESSIONID);
 					
 					if (cookie != null) {
-						LOGGER.info("Webstagram !!!!! " + cookie.getName() + "   " + cookie.getValue() + " !!!!!!!");
+						LOGGER.info("Webstagram !!!!! {}   {}", cookie.getName(), cookie.getValue());
 						return cookie.getValue();
 					}
 				}
 			} catch (FailingHttpStatusCodeException | IOException e) {
-				LOGGER.error("Exception in getSeesion() ", e);
+				LOGGER.error("Exception in getSeesion() caused by: {} ", e);
 			} finally {
 				webClient.closeAllWindows();
 			}

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
 import org.jinstagram.Instagram;
 import org.jinstagram.entity.users.basicinfo.UserInfo;
 import org.jinstagram.entity.users.feed.UserFeed;
@@ -15,10 +14,12 @@ import com.vahe.InsClientFactoy;
 import com.vahe.LikeParmetes;
 import com.vahe.delayer.Delayer;
 import com.vahe.delayer.InsagramAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FollowerClient implements InsagramAction {
 
-	private static final Logger LOGGER = Logger.getLogger(IskFollower.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(IskFollower.class);
 
 	private final Instagram instagramClient;
 
@@ -52,7 +53,7 @@ public class FollowerClient implements InsagramAction {
 				try {
 					TimeUnit.MINUTES.sleep(20);
 				} catch (InterruptedException e) {
-					LOGGER.error(e);
+					LOGGER.error("Action failed caused by: {}", e);
 				}
 			}
 		}
@@ -64,11 +65,11 @@ public class FollowerClient implements InsagramAction {
 		if (userMediaCount < 5) {
 			iskFollower.follow(id, FollowAction.DENY);
 			totalDenyCount++;
-			LOGGER.info("Total Deny count is " + totalDenyCount);
+			LOGGER.info("Total Deny count is {}", totalDenyCount);
 		} else {
 			iskFollower.follow(id, FollowAction.APPROVE);
 			totalApproveCount++;
-			LOGGER.info("Total Approve count is " + totalApproveCount);
+			LOGGER.info("Total Approve count is {}", totalApproveCount);
 		}
 
 		index++;
@@ -82,7 +83,7 @@ public class FollowerClient implements InsagramAction {
 			System.out.println(userList.size());
 			followingUsers = userList;
 		} catch (InstagramException e) {
-			LOGGER.error("Exception in refreshFollowingUsers()", e);
+			LOGGER.error("Exception in refreshFollowingUsers() caused by: {}", e);
 			followingUsers = new ArrayList<>();
 		}
 	}
@@ -94,7 +95,7 @@ public class FollowerClient implements InsagramAction {
 			System.out.println("Media counts is   " + mediaCount);
 			return mediaCount;
 		} catch (InstagramException e) {
-			LOGGER.error("exception in getUserDetails()  returning -1", e);
+			LOGGER.error("exception in getUserDetails()  returning -1 caused by: {}", e);
 			return 1;
 		}
 	}

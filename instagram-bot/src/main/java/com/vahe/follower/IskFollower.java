@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
-import org.apache.log4j.Logger;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
@@ -26,10 +25,12 @@ import com.vahe.LikeParmetes;
 import com.vahe.liker.StatigramLiker;
 import com.vahe.utils.Const;
 import com.vahe.utils.HtmlUnitUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IskFollower {
 
-	private static final Logger LOGGER = Logger.getLogger(IskFollower.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(IskFollower.class);
 	
 	private  Set<Cookie> cookiesSet;
 	private  String sess;
@@ -60,11 +61,11 @@ public class IskFollower {
 			        .bodyForm(Form.form().add("count", "50").add("action", action.getValue()).build())
 			        .execute().returnContent().asString();
 		} catch (IOException e) {
-			LOGGER.error("Exception in likeByPhotoId ", e);
+			LOGGER.error("Exception in likeByPhotoId {}", e);
 			refreshSession();
 		}
 		
-		LOGGER.info("!!!! Statigram  Respone is    " + response);
+		LOGGER.info("!!!! Statigram  Respone is {}" + response);
 
 	}
 	
@@ -83,7 +84,7 @@ public class IskFollower {
 		try {
 			TimeUnit.SECONDS.sleep(5);
 		} catch (InterruptedException e) {
-			LOGGER.info(e);
+			LOGGER.info("Failed to refresh session, casued by: {}", e);
 		}
 	}
 
@@ -94,7 +95,7 @@ public class IskFollower {
 
 	private static class SessionScraper {
 
-		private static final Logger LOGGER = Logger.getLogger(SessionScraper.class);
+		private static final Logger LOGGER = LoggerFactory.getLogger(SessionScraper.class);
 
 //		private static final String SESSIONID = "session_id";
 //		private static final String ID = "id";
@@ -142,7 +143,7 @@ public class IskFollower {
 						 
 				}
 			} catch (FailingHttpStatusCodeException | IOException e) {
-				LOGGER.error("Exception in getSeesion() ", e);
+				LOGGER.error("Exception in getSeesion() {}", e);
 			} finally {
 				webClient.closeAllWindows();
 			}

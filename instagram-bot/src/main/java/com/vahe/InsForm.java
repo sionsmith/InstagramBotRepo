@@ -27,11 +27,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 import com.vahe.follower.FollowerClient;
 import com.vahe.liker.LikerClient;
 import com.vahe.utils.Site;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InsForm extends JFrame {
 
@@ -39,7 +40,7 @@ public class InsForm extends JFrame {
 	private static final String LIKE_COUNT_DEFAULT = "10";
 	private static final String DELAY_DEFAULT = "5";
 	
-	private static final Logger LOGGER = Logger.getLogger(InsForm.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(InsForm.class);
 	
 	private JPanel contentPane;
 	private JTextField username;
@@ -311,13 +312,13 @@ public class InsForm extends JFrame {
 			maxLikes = MAX_LIKE_PER_HOUR_DEFAULT;
 		}
 		
-		LOGGER.info("username : " + username);
-		LOGGER.info("password : " + password);
-		LOGGER.info("likePerPhoto : " + likePerPhoto);
-		LOGGER.info("tagName : " + tagname);
-		LOGGER.info("delay : " + delay);
-		LOGGER.info("maxLikes : " + maxLikes);
-		LOGGER.info("siets list is " + siteList);
+		LOGGER.info("username : {}", username);
+		LOGGER.info("password : {}", password);
+		LOGGER.info("likePerPhoto : {}", likePerPhoto);
+		LOGGER.info("tagName : {}", tagname);
+		LOGGER.info("delay : {}", delay);
+		LOGGER.info("maxLikes : {}", maxLikes);
+		LOGGER.info("siets list is {}", siteList);
 		LikeParmetes likeParmetes = new LikeParmetes(Integer.valueOf(likePerPhoto), Integer.valueOf(delay), Integer.valueOf(maxLikes), tagname,
 				username, password,siteList);
 		

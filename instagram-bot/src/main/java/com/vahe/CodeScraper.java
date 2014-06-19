@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
-
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -14,12 +12,14 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.vahe.utils.HtmlUnitUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class CodeScraper {
-	private static final String USERNAME = "karine_min";
-	private static final String PASSWORD = "karine1234";
+ public class CodeScraper {
+     private static final String USERNAME = "tubeagram";
+     private static final String PASSWORD = "soundcard";
 
-	private static final Logger LOGGER = Logger.getLogger(CodeScraper.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CodeScraper.class);
 	private static final String REGEX_CODE = "code=(.+)";
 	private static final String PASSWORD_INP = "password";
 	private static final String USERNAME_INP = "username";
@@ -40,8 +40,8 @@ public class CodeScraper {
 				List<HtmlInput> inputsByName = form.getInputsByName(PASSWORD_INP);
 				HtmlInput passwordInput = inputsByName.get(0);
 
-				usernameInput.setValueAttribute(username);
-				passwordInput.setValueAttribute(password);
+                usernameInput.setValueAttribute(USERNAME);
+                passwordInput.setValueAttribute(PASSWORD);
 
 				HtmlPage newPage = submitButton.click();
 
@@ -54,10 +54,10 @@ public class CodeScraper {
 					}
 
 				} catch (ElementNotFoundException e) {
-					LOGGER.info("There is not second page in authorization process    ",e);
+					LOGGER.info("There is not second page in authorization process: {}", e);
 				}
 				String apiUrl = newPage.getUrl().toString();
-				LOGGER.info(" !!! API url is   " + apiUrl);
+				LOGGER.info(" !!! API url is: {}", apiUrl);
 
 				Matcher matcher = Pattern.compile(REGEX_CODE).matcher(apiUrl);
 				String code = "";
@@ -67,7 +67,7 @@ public class CodeScraper {
 				return code;
 			}
 		} catch (FailingHttpStatusCodeException | IOException e) {
-			LOGGER.error("Exception in getAPICode()   ", e);
+			LOGGER.error("Exception in getAPICode() caused by: {}", e);
 		} finally {
 			webClient.closeAllWindows();
 		}

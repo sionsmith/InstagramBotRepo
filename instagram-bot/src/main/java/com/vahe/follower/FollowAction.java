@@ -2,7 +2,6 @@ package com.vahe.follower;
 
 public enum FollowAction {
 
-	
 	APPROVE("approve"),
 	DENY("deny");
 

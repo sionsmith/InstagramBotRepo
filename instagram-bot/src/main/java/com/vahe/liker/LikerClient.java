@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
 import org.jinstagram.Instagram;
 import org.jinstagram.entity.tags.TagMediaFeed;
 import org.jinstagram.entity.users.basicinfo.UserInfo;
@@ -20,10 +19,12 @@ import com.vahe.delayer.InsagramAction;
 import com.vahe.follower.FollowAction;
 import com.vahe.follower.IskFollower;
 import com.vahe.utils.Site;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LikerClient implements InsagramAction {
 
-	private static final Logger LOGGER = Logger.getLogger(LikerClient.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(LikerClient.class);
 
 	private Instagram instagramClient;
 	private long pageNumber = 0;
@@ -97,7 +98,7 @@ public class LikerClient implements InsagramAction {
 
 					LOGGER.info(msg);
 				} catch (Exception e) {
-					LOGGER.error("Exception in likeOnePage()   ", e);
+					LOGGER.error("Exception in likeOnePage() {}", e);
 				}
 			}
 		}
@@ -136,7 +137,7 @@ public class LikerClient implements InsagramAction {
 				data = recentMediaTags.getData();
 				pageNumber++;
 			} catch (InstagramException e) {
-				LOGGER.error("Exception in getRecentElements(tagName)  ", e);
+				LOGGER.error("Exception in getRecentElements(tagName) caused by: {}", e);
 				TimeUnit.SECONDS.sleep(3);
 //				LOGGER.info("Refreshing Acces token for instagram Client");
 //				initInstagramCrient();
@@ -147,10 +148,10 @@ public class LikerClient implements InsagramAction {
 			}
 			return singleList;
 		} catch (RuntimeException e) {
-			LOGGER.error("Runtime Exception in getRecentElements", e);
+			LOGGER.error("Runtime Exception in getRecentElements {}", e);
 			return new ArrayList<>();
 		} catch (Exception e1) {
-			LOGGER.error("Exception in getRecentElements ", e1);
+			LOGGER.error("Exception in getRecentElements {}", e1);
 			return new ArrayList<>();
 		}
 
@@ -183,7 +184,7 @@ public class LikerClient implements InsagramAction {
 			System.out.println("Media counts is   "  + mediaCount);
 			return mediaCount;
 		} catch (InstagramException e) {
-			LOGGER.error("exception in getUserDetails()  returning -1", e);
+			LOGGER.error("exception in getUserDetails()  returning -1 caused by:  {}", e);
 			return 1; 
 		}
 	}

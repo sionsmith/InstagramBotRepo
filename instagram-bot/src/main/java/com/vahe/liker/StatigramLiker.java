@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
-import org.apache.log4j.Logger;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.Page;
@@ -22,6 +21,8 @@ import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.vahe.LikeParmetes;
 import com.vahe.utils.Const;
 import com.vahe.utils.HtmlUnitUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StatigramLiker implements InstagramLiker {
 
@@ -36,7 +37,7 @@ public class StatigramLiker implements InstagramLiker {
 
 	private static final String PARAMSTRING = "action=postLike&photo_id=";
 
-	private static final Logger LOGGER = Logger.getLogger(StatigramLiker.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StatigramLiker.class);
 
 	private  String sessionId;
 
@@ -63,11 +64,11 @@ public class StatigramLiker implements InstagramLiker {
 			        .bodyForm(Form.form().add(ACTION, POST_LIKE).add(PHOTO_ID, photoId).build())
 			        .execute().returnContent().asString();
 		} catch (IOException e) {
-			LOGGER.error("Exception in likeByPhotoId ", e);
+			LOGGER.error("Exception in likeByPhotoId caused by: {}", e);
 			refreshSession();
 		}
 		
-		LOGGER.info("!!!! Statigram  Respone is    " + response);
+		LOGGER.info("!!!! Statigram  Respone is {}" + response);
 		if(StringUtils.isNotBlank(response)){
 			LOGGER.info("!!!! Statigram  Respone is    not blunk, require refreshing");
 			refreshSession();
@@ -78,11 +79,11 @@ public class StatigramLiker implements InstagramLiker {
 	
 	private static class SessionScraper {
 
-		private static final Logger LOGGER = Logger.getLogger(SessionScraper.class);
+		private static final Logger LOGGER = LoggerFactory.getLogger(SessionScraper.class);
 
 		private static final String STATISESSID = "STATISESSID";
 		private static final String TAG_PAGE = "http://statigr.am/viewer.php#/tag/dilijan/";
-		private static final String URL = "https://instagram.com/oauth/authorize?client_id=d9494686198d4dfeb954979a3e270e5e&redirect_uri=http%3A%2F%2Fstatigr.am&response_type=code&scope=likes+comments+relationships";
+        private static final String URL = "https://instagram.com/oauth/authorize?client_id=d9494686198d4dfeb954979a3e270e5e&redirect_uri=http%3A%2F%2Ficonosquare.com&response_type=code&scope=likes+comments+relationships";
 
 	
 		private final String username;
@@ -124,7 +125,7 @@ public class StatigramLiker implements InstagramLiker {
 					 
 				}
 			} catch (FailingHttpStatusCodeException | IOException e) {
-				LOGGER.error("Exception in getSeesion() ", e);
+				LOGGER.error("Exception in getSeesion() caused by: {}", e);
 			} finally {
 				webClient.closeAllWindows();
 			}

@@ -1,6 +1,5 @@
 package com.vahe;
 
-import org.apache.log4j.Logger;
 import org.jinstagram.Instagram;
 import org.jinstagram.auth.InstagramAuthService;
 import org.jinstagram.auth.model.Token;
@@ -8,6 +7,8 @@ import org.jinstagram.auth.model.Verifier;
 import org.jinstagram.auth.oauth.InstagramService;
 import org.jinstagram.entity.users.basicinfo.UserInfo;
 import org.jinstagram.exceptions.InstagramException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InsClientFactoy {
 
@@ -16,7 +17,7 @@ public class InsClientFactoy {
 	private static final String CALLBACK_URL = "http://rpnews.ru/";
 	private static final Token EMPTY_TOKEN = null;
 	
-	private static final Logger LOGGER = Logger.getLogger(InsClientFactoy.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(InsClientFactoy.class);
 	
 	public static Instagram getClient(String username, String password){
 		InstagramService service = new InstagramAuthService().apiKey(CLIENT_ID)
@@ -32,7 +33,7 @@ public class InsClientFactoy {
 //				likeParmetes.getUsername(), likeParmetes.getPassword());
 		String verifierCode = CodeScraper.getAPICode(authorizationUrl, username, password);
 
-		LOGGER.info("Verification code is  " + verifierCode);
+		LOGGER.info("Verification code is: {} ", verifierCode);
 		Verifier verifier = new Verifier(verifierCode);
 		Token accessToken = service.getAccessToken(EMPTY_TOKEN, verifier);
 
@@ -42,10 +43,10 @@ public class InsClientFactoy {
 		try {
 			userInfo = instagramClient.getCurrentUserInfo();
 			LOGGER.info("***** User Info ******");
-			LOGGER.info("Username : " + userInfo.getData().getUsername());
+			LOGGER.info("Username : {}", userInfo.getData().getUsername());
 
 		} catch (InstagramException e) {
-			LOGGER.error("Connot initialize Instagram Client  ", e);
+			LOGGER.error("Connot initialize Instagram Client  {}", e);
 		}
     
 		return instagramClient;
